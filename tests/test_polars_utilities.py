@@ -9,9 +9,9 @@ from jupyter_utils import polars as polars_utils
 @pytest.mark.parametrize(
     ("count", "test_size", "train_size", "expected_heights"),
     [
-        (10, 0.2, 0.4, (2, 4)),
-        (10, 0.2, None, (2, 8)),
-        (11, 0.2, None, (2, 9)),
+        (10, 0.2, 0.4, (2, 4, 4)),
+        (10, 0.2, None, (2, 8, 0)),
+        (11, 0.2, None, (2, 9, 0)),
         (11, 0.2, 0.9, None),
     ],
 )

@@ -13,8 +13,9 @@ P = ParamSpec("P")
 class TrainTestSplit(NamedTuple):
     """Tuple of the test and train split."""
 
-    test: pl.LazyFrame
     train: pl.LazyFrame
+    test: pl.LazyFrame
+    validation: pl.LazyFrame
 
 
 def column_to_series(
@@ -91,11 +92,16 @@ def train_test_split(
         col_name = f"_id{uuid.uuid4()}"
 
     df = df.with_columns(pl.Series(name=col_name, values=idx))
-    test_df = df.filter(pl.col(col_name) < test_size)
-    train_df = df.filter(
+
+    train_df = df.filter(pl.col(col_name) < test_size)
+    test_df = df.filter(
         pl.col(col_name).is_between(test_size, test_size + train_size, closed="left")
+    )
+    validation_df = df.filter(
+        pl.col(col_name).is_between(test_size + train_size, count, closed="left")
     )
     return TrainTestSplit(
         test=test_df.select(pl.exclude(col_name)),
         train=train_df.select(pl.exclude(col_name)),
+        validation=validation_df,
     )
