@@ -10,9 +10,10 @@ readme = {file = "README.md"}
 version = {attr = "jupyter_utils.__version__"}
 
 [project.optional-dependencies]
-all = ["jupyter-utils[dev]"]
+all = ["jupyter-utils[dev,polars]"]
 dev = ["pip-tools", "ruff", "jupyter-utils[test]"]
-test = ["pytest", "pytest-cov"]
+polars = ['polars']
+test = ["pytest", "pytest-cov", "numpy"]
 
 [tool.setuptools.package-dir]
 "jupyter_utils" = "jupyter_utils"

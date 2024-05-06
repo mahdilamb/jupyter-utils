@@ -4,9 +4,13 @@ default: help
 PACKAGE_DIR=jupyter_utils
 SRC_FILES=${PACKAGE_DIR} tests
 
+REQUIREMENTS_SUFFIX=$(shell [ -z ${extras} ] || echo '-${extras}')
+REQUIREMENTS_MD5_FILE=$(shell [ -z ${extras} ] && echo 'requirements.in.md5' || echo 'pyproject.toml.${extras}.md5')
 requirements: # Compile the pinned requirements if they've changed.
-	@[ -f "requirements.in.md5" ] && md5sum --status -c requirements.in.md5 ||\
-	( md5sum requirements.in > requirements.in.md5 && (python3 -c 'import piptools' || pip install pip-tools ) && pip-compile requirements.in -o requirements.txt )
+	@[ -f "${REQUIREMENTS_MD5_FILE}" ] && md5sum --status -c ${REQUIREMENTS_MD5_FILE} ||\
+	( md5sum requirements.in $(shell [ -z ${extras} ] || echo pyproject.toml) > ${REQUIREMENTS_MD5_FILE} && (python3 -c 'import piptools' || pip install pip-tools ) && pip-compile $(shell echo '${REQUIREMENTS_MD5_FILE}' | grep -oP '^([^\.]*?\.)[^\.]*' ) $(shell [ -z ${extras} ] || echo '--extra ${extras}' ) -o requirements${REQUIREMENTS_SUFFIX}.txt )
+
+requirements: extras=all
 
 install: # Install minimum required packages.
 	@make requirements && pip install -e .${extras}
