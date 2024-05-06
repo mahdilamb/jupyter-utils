@@ -17,9 +17,9 @@ jobs:
 
       - name: Unit tests [pytest]
         run: |
-          pytest --cov=jupyter-utils --cov-report term-missing
+          pytest --cov=jupyter_utils --cov-report term-missing
           coverage report --format=markdown -m >> $GITHUB_STEP_SUMMARY
 
       - name: QC [ruff]
         if: ${{!cancelled()}}
-        run: ruff check jupyter-utils
+        run: ruff check jupyter_utils
