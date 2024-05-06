@@ -1,21 +1,21 @@
 [project]
 dynamic = ["version", "readme", "dependencies"]
 license = {file = "LICENCE"}
-name = "temporary-python-project"
+name = "jupyter-utils"
 requires-python = ">=3.11"
 
 [tool.setuptools.dynamic]
 dependencies = {file = "requirements.txt"}
 readme = {file = "README.md"}
-version = {attr = "temporary_python_project.__version__"}
+version = {attr = "jupyter_utils.__version__"}
 
 [project.optional-dependencies]
-all = ["temporary-python-project[dev]"]
-dev = ["pip-tools", "ruff", "temporary-python-project[test]"]
+all = ["jupyter-utils[dev]"]
+dev = ["pip-tools", "ruff", "jupyter-utils[test]"]
 test = ["pytest", "pytest-cov"]
 
 [tool.setuptools.package-dir]
-"temporary_python_project" = "temporary_python_project"
+"jupyter_utils" = "jupyter_utils"
 
 [tool.pytest.ini_options]
 addopts = [

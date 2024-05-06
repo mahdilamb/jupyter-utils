@@ -1,7 +1,7 @@
 .PHONY: help requirements install install-all qc test ruff mypy prune-branches
 default: help
 
-PACKAGE_DIR=temporary_python_project
+PACKAGE_DIR=jupyter_utils
 SRC_FILES=${PACKAGE_DIR} tests
 
 requirements: # Compile the pinned requirements if they've changed.
