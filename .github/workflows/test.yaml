@@ -18,7 +18,7 @@ jobs:
         with:
           script: |
             console.log(require(process.env.GITHUB_EVENT_PATH).after)
-            const number = await octokit.rest.repos.listPullRequestsAssociatedWithCommit({
+            const number = await github.rest.repos.listPullRequestsAssociatedWithCommit({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 require(process.env.GITHUB_EVENT_PATH).after,
