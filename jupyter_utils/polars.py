@@ -49,6 +49,8 @@ def lazy_height(df: pl.LazyFrame | pl.DataFrame) -> int:
     """Get the height of a data frame."""
     if isinstance(df, pl.DataFrame):
         return df.height
+    if len(df.columns) == 0:
+        return 0
     return df.select(pl.len()).collect().item()
 
 
