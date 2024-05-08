@@ -17,31 +17,17 @@ jobs:
       - uses: actions/github-script@v6
         with:
           script: |
-            let number;
             console.log(require(process.env.GITHUB_EVENT_PATH).after)
-            console.log(
-                await octokit.rest.repos.listPullRequestsAssociatedWithCommit({
-                    owner: context.repo.owner,
-                    repo: context.repo.repo,
-                    require(process.env.GITHUB_EVENT_PATH).after,
-                  });
-            )
-            switch('${{ github.event_name}}') {
-                case 'push':
-                    const { stdout } = await exec.getExecOutput('jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH"',undefined)
-                    console.log(stdout)
-                    break
-                case 'pull_request':
-                    number = '${{ github.event.number }}'
-                    break
-            }
-            if (number === ''){
-                throw 'Could not determine PR number.'
-            }
-            console.log(JSON.stringify(${{github.event}}))
+            const number = await octokit.rest.repos.listPullRequestsAssociatedWithCommit({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                require(process.env.GITHUB_EVENT_PATH).after,
+              });
+            console.log(number)
+
             const description = await github.rest.pulls.get({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                pull_number: 7
+                pull_number: number
             })
             console.log(description.data.body)
