@@ -13,21 +13,8 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ github.ref }}
-      - run: 'echo "${{github.event.pull_request.body}}"'
       - uses: actions/github-script@v6
         with:
           script: |
             console.log(require(process.env.GITHUB_EVENT_PATH).after)
-            const number = await github.rest.repos.listPullRequestsAssociatedWithCommit({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                require(process.env.GITHUB_EVENT_PATH).after,
-              });
-            console.log(number)
-
-            const description = await github.rest.pulls.get({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                pull_number: number
-            })
-            console.log(description.data.body)
+            
