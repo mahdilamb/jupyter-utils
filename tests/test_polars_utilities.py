@@ -78,6 +78,14 @@ def test_getting_column_from_dataframe(
     ), "Expected the 0th column to be answer."
 
 
+@pytest.mark.parametrize(
+    ("df",), [(pl.DataFrame(),), (pl.LazyFrame(),), (pl.DataFrame().lazy(),)]
+)
+def test_no_throw_for_height_of_empty_dataframe(df):
+    """Test that empty dataframes return a 0 and don't thrown an error."""
+    assert polars_utils.lazy_height(df) == 0
+
+
 if __name__ == "__main__":
     import sys
 
