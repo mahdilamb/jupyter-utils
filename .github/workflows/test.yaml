@@ -22,4 +22,4 @@ jobs:
                 repo: 'jupyter-utils',
                 pull_number: 7
             })
-            console.log(description)
+            console.log(description.body)
