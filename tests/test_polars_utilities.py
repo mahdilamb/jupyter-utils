@@ -3,7 +3,7 @@
 import polars as pl
 import pytest
 
-from jupyter_utils import polars as polars_utils
+import jupyter_utils.polars as polars_utils
 
 
 @pytest.mark.parametrize(
