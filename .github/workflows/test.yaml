@@ -17,9 +17,9 @@ jobs:
       - uses: actions/github-script@v6
         with:
           script: |
-            const description = (await github.rest.pulls.get(
-            {owner: 'mahdilamb',
-            repo: 'jupyter-utils',
-            pull_number: 7}
-            ))
-            console.log(description.description)
+            const description = await github.rest.pulls.get({
+                owner: 'mahdilamb',
+                repo: 'jupyter-utils',
+                pull_number: 7
+            })
+            console.log(description)
