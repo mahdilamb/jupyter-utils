@@ -1,1 +1,1 @@
-# jupyter-utils
+# magicbox

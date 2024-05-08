@@ -1,7 +1,7 @@
 .PHONY: help requirements install install-all qc test ruff mypy prune-branches
 default: help
 
-PACKAGE_DIR=jupyter_utils
+PACKAGE_DIR=magicbox
 SRC_FILES=${PACKAGE_DIR} tests
 
 REQUIREMENTS_SUFFIX=$(shell [ -z ${extras} ] || echo '-${extras}')
@@ -10,13 +10,13 @@ requirements: # Compile the pinned requirements if they've changed.
 	@[ -f "${REQUIREMENTS_MD5_FILE}" ] && md5sum --status -c ${REQUIREMENTS_MD5_FILE} ||\
 	( md5sum requirements.in $(shell [ -z ${extras} ] || echo pyproject.toml) > ${REQUIREMENTS_MD5_FILE} && (python3 -c 'import piptools' || pip install pip-tools ) && pip-compile $(shell echo '${REQUIREMENTS_MD5_FILE}' | grep -oP '^([^\.]*?\.)[^\.]*' ) $(shell [ -z ${extras} ] || echo '--extra ${extras}' ) -o requirements${REQUIREMENTS_SUFFIX}.txt )
 
-requirements: extras=all
+requirements: extras=
 
 install: # Install minimum required packages.
 	@make requirements && pip install -e .${extras}
 
 install-all: # Install all packages
-	@make install extras='[all]'
+	@make requirements && make requirements extras=all && make install extras='[all]'
 
 ruff: # Run ruff
 	@ruff check ${SRC_FILES} --fix

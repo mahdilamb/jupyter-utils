@@ -3,7 +3,7 @@
 
 import pytest
 
-from jupyter_utils import functions as func_utils
+from magicbox import functions as func_utils
 
 
 def test_return_arg():

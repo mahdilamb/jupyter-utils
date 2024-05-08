@@ -3,7 +3,7 @@
 import polars as pl
 import pytest
 
-import jupyter_utils.polars as polars_utils
+import magicbox.polars as polars_utils
 
 
 @pytest.mark.parametrize(
