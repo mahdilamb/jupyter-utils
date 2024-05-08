@@ -18,8 +18,8 @@ jobs:
         with:
           script: |
             const description = (await github.rest.pulls.get(
-            owner: 'mahdilamb',
+            {owner: 'mahdilamb',
             repo: 'jupyter-utils',
-            pull_number: 7
+            pull_number: 7}
             ))
             console.log(description.description)
