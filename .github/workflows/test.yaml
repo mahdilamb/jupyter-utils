@@ -1,0 +1,25 @@
+on:
+  push:
+
+jobs:
+  release:
+    name: "Create release"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Checkout current branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+
+      - uses: actions/github-script@v6
+        with:
+          script: |
+            const description = (await github.rest.pulls.get(
+            owner: 'mahdilamb',
+            repo: 'jupyter-utils',
+            pull_number: 7
+            ))
+            console.log(description.description)
