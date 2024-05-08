@@ -29,7 +29,10 @@ NUMERIC_CHECKERS = MappingProxyType(
 STRING_CHECKERS: Mapping[str, Callable[[pl.Expr], pl.Expr]] = MappingProxyType(
     {
         "null": pl_expr.Expr.is_null,
-        "empty": lambda col: pl_strings.ExprStringNameSpace.len_chars(col) == 0,  # type: ignore
+        "empty": lambda col: pl_strings.ExprStringNameSpace.len_chars(
+            col.cast(pl.String)
+        )
+        == 0,  # type: ignore
         "len": pl_expr.Expr.len,
     }
 )

@@ -129,6 +129,14 @@ def test_no_throw_for_height_of_empty_dataframe(df):
             pl.DataFrame({"column": ["a"], "null": [1], "empty": [1], "len": [3]}),
             polars_utils.check_string_columns,
         ),
+        (
+            pl.DataFrame(
+                {"a": ["Hello", "world", None]},
+                schema={"a": pl.Enum(("Hello", "world"))},
+            ),
+            pl.DataFrame({"column": ["a"], "null": [1], "empty": [0], "len": [3]}),
+            polars_utils.check_string_columns,
+        ),
     ],
 )
 def test_checkers(df: pl.DataFrame, expected, checker):
