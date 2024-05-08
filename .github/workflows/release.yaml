@@ -2,6 +2,9 @@ on:
   push:
     branches: [main]
 
+permissions:
+  contents: write
+
 jobs:
   release:
     name: "Create release"
@@ -52,5 +55,5 @@ jobs:
               tag_name: 'v${{steps.version.outputs.version}}',
               draft: false,
               body: description,
-              make_latest: true
+              make_latest: 'true'
             })
