@@ -18,7 +18,14 @@ jobs:
         with:
           script: |
             let number;
-            console.log(require(process.env.GITHUB_EVENT_PATH))
+            console.log(require(process.env.GITHUB_EVENT_PATH).after)
+            console.log(
+                await octokit.rest.repos.listPullRequestsAssociatedWithCommit({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    require(process.env.GITHUB_EVENT_PATH).after,
+                  });
+            )
             switch('${{ github.event_name}}') {
                 case 'push':
                     const { stdout } = await exec.getExecOutput('jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH"',undefined)
