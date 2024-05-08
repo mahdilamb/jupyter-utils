@@ -158,8 +158,7 @@ def to_dict(
     values: str | int = 1,
 ) -> dict:
     """Convert two columns into a dictionary."""
-    if isinstance(df, pl.DataFrame):
-        df = df.lazy()
+    df = df.lazy()
     if isinstance(keys, int):
         keys = df.columns[keys]
     if isinstance(values, int):
