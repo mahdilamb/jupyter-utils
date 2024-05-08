@@ -2,15 +2,34 @@
 
 import re
 import uuid
+from collections.abc import Callable, Mapping, Sequence
+from types import MappingProxyType
 from typing import Any, NamedTuple, ParamSpec, TypeVar
 
 import numpy as np
 import polars as pl
+import polars.expr as pl_expr
+import polars.selectors as cs
+import polars.type_aliases as pl_types
 from polars import datatypes as pl_dtypes
-from polars import type_aliases as pl_types
 
 T = TypeVar("T", bound=tuple)
 P = ParamSpec("P")
+
+
+NUMERIC_CHECKERS = MappingProxyType(
+    {
+        "inf": pl_expr.Expr.is_finite,
+        "nan": pl_expr.Expr.is_nan,
+        "null": pl_expr.Expr.is_null,
+    }
+)
+STRING_CHECKERS: Mapping[str, Callable[[pl.Expr], pl.Expr]] = MappingProxyType(
+    {
+        "null": pl_expr.Expr.is_null,
+        "empty": lambda col: pl_expr.Expr.len(col) == 0,
+    }
+)
 SUPPORTED_REGEX_FLAGS = {
     re.I: "i",
     re.M: "m",
@@ -175,4 +194,62 @@ def to_dict(
             ),
             strict=False,
         )
+    )
+
+
+def check_columns(
+    df: pl.LazyFrame | pl.DataFrame,
+    selectors: Sequence[pl_types.IntoExpr],
+    check_functions: Mapping[str, Callable[[pl.Expr], pl.Expr]],
+):
+    """Check a set of columns using some checking functions."""
+    df = df.lazy().select(selectors)
+    result = pl.DataFrame()
+    for name, func in check_functions.items():
+        result = result.vstack(
+            df.select(
+                pl.lit(name).alias("check"),
+                *(func(pl.col(col)).sum() for col in df.columns),
+            ).collect()
+        )
+    return result.select(pl.exclude("check")).transpose(
+        include_header=True, column_names=result.select("check").to_series()
+    )
+
+
+def check_numeric_columns(
+    df: pl.LazyFrame | pl.DataFrame,
+    check_functions: Mapping[str, Callable[[pl.Expr], pl.Expr]] = NUMERIC_CHECKERS,
+) -> pl.DataFrame:
+    """Check numeric columns for inf, nan and null."""
+    return check_columns(
+        df,
+        (
+            cs.numeric(),
+            *(
+                k
+                for k, v in df.schema.items()
+                if isinstance(v, pl.Enum) and v.categories.dtype.is_numeric()
+            ),
+        ),
+        check_functions,
+    )
+
+
+def check_string_columns(
+    df: pl.LazyFrame | pl.DataFrame,
+    check_functions: Mapping[str, Callable[[pl.Expr], pl.Expr]] = STRING_CHECKERS,
+) -> pl.DataFrame:
+    """Check string columns for null and empty."""
+    return check_columns(
+        df,
+        (
+            cs.string(include_categorical=True),
+            *(
+                k
+                for k, v in df.schema.items()
+                if isinstance(v, pl.Enum) and v.categories.dtype == pl.String
+            ),
+        ),
+        check_functions,
     )
