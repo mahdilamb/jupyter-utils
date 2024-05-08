@@ -17,7 +17,7 @@ jobs:
       - uses: actions/github-script@v6
         with:
           script: |
-            console.log(JSON.stringify(context))
+            console.log(JSON.stringify(${{github.event}}))
             const description = await github.rest.pulls.get({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
