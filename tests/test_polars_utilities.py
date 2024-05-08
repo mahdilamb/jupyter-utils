@@ -86,6 +86,59 @@ def test_no_throw_for_height_of_empty_dataframe(df):
     assert polars_utils.lazy_height(df) == 0
 
 
+@pytest.mark.parametrize(
+    ("df", "expected", "checker"),
+    [
+        (
+            pl.DataFrame({"a": [None, 0, 1]}),
+            pl.DataFrame(
+                {"column": ["a"], "inf": [0], "nan": [0], "null": [1], "len": [3]}
+            ),
+            polars_utils.check_numeric_columns,
+        ),
+        (
+            pl.DataFrame({"a": [float("nan"), 0, 1]}),
+            pl.DataFrame(
+                {"column": ["a"], "inf": [0], "nan": [1], "null": [0], "len": [3]}
+            ),
+            polars_utils.check_numeric_columns,
+        ),
+        (
+            pl.DataFrame({"a": [float("inf"), 0, 1]}),
+            pl.DataFrame(
+                {"column": ["a"], "inf": [1], "nan": [0], "null": [0], "len": [3]}
+            ),
+            polars_utils.check_numeric_columns,
+        ),
+        (
+            pl.DataFrame({"a": [float("-inf"), 0, 1]}),
+            pl.DataFrame(
+                {"column": ["a"], "inf": [1], "nan": [0], "null": [0], "len": [3]}
+            ),
+            polars_utils.check_numeric_columns,
+        ),
+        (
+            pl.DataFrame({"a": [float("-nan"), 0, 1]}),
+            pl.DataFrame(
+                {"column": ["a"], "inf": [0], "nan": [1], "null": [0], "len": [3]}
+            ),
+            polars_utils.check_numeric_columns,
+        ),
+        (
+            pl.DataFrame({"a": ["Hey :D-<", "", None]}),
+            pl.DataFrame({"column": ["a"], "null": [1], "empty": [1], "len": [3]}),
+            polars_utils.check_string_columns,
+        ),
+    ],
+)
+def test_checkers(df: pl.DataFrame, expected, checker):
+    """Test the various checkers."""
+    actual: pl.DataFrame = checker(df)
+    assert (actual == expected).sum_horizontal().item() == len(
+        actual.columns
+    ), "Expected the check to return valid metrics."
+
+
 if __name__ == "__main__":
     import sys
 

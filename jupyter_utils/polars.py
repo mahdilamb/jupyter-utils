@@ -9,6 +9,7 @@ from typing import Any, NamedTuple, ParamSpec, TypeVar
 import numpy as np
 import polars as pl
 import polars.expr as pl_expr
+import polars.expr.string as pl_strings
 import polars.selectors as cs
 import polars.type_aliases as pl_types
 from polars import datatypes as pl_dtypes
@@ -19,15 +20,17 @@ P = ParamSpec("P")
 
 NUMERIC_CHECKERS = MappingProxyType(
     {
-        "inf": pl_expr.Expr.is_finite,
+        "inf": pl_expr.Expr.is_infinite,
         "nan": pl_expr.Expr.is_nan,
         "null": pl_expr.Expr.is_null,
+        "len": pl_expr.Expr.len,
     }
 )
 STRING_CHECKERS: Mapping[str, Callable[[pl.Expr], pl.Expr]] = MappingProxyType(
     {
         "null": pl_expr.Expr.is_null,
-        "empty": lambda col: pl_expr.Expr.len(col) == 0,
+        "empty": lambda col: pl_strings.ExprStringNameSpace.len_chars(col) == 0,  # type: ignore
+        "len": pl_expr.Expr.len,
     }
 )
 SUPPORTED_REGEX_FLAGS = {
