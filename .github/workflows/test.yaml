@@ -16,9 +16,9 @@ jobs:
       - uses: actions/github-script@v6
         with:
           script: |
-            const commit = require(process.env.GITHUB_EVENT_PATH).after;
             const prNumber = await github.rest.repos.listPullRequestsAssociatedWithCommit({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                commit_sha: commit,
-              });
+                commit_sha: process.env.GITHUB_SHA,
+            });
+            console.log(prNumber)
