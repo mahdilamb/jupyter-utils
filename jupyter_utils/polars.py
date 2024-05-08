@@ -140,7 +140,12 @@ def convert_regex(pattern: re.Pattern) -> str:
     Returns:
         str: The regex that can be used by polars.
     """
-    flags = f'(?{"".join(tuple(code for flag, code in SUPPORTED_REGEX_FLAGS.items() if pattern.flags & flag == flag))})'
+    filtered_flags = tuple(
+        code
+        for flag, code in SUPPORTED_REGEX_FLAGS.items()
+        if pattern.flags & flag == flag
+    )
+    flags = f'(?{"".join(filtered_flags)})'
     if not re.match(r"(?<!\\)\(.*?(?<!\\)\)", pattern.pattern):
         return f"{flags}({pattern.pattern})"
     else:
