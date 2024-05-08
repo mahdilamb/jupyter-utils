@@ -18,6 +18,7 @@ jobs:
         with:
           script: |
             let number;
+            console.log(process.env.GITHUB_EVENT_PATH)
             switch('${{ github.event_name}}') {
                 case 'push':
                     const { stdout } = await exec.getExecOutput('jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH"',undefined)
