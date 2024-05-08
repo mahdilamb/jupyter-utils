@@ -18,16 +18,18 @@ jobs:
         with:
           script: |
             let number;
-            switch(${{ github.event_name}}) {
+            switch('${{ github.event_name}}') {
                 case 'push':
                     const execa = require('execa')
-
                     const { stdout } = await execa('gh pr view --json number -q .number || echo ""',undefined)
                     console.log(stdout)
                     break
                 case 'pull_request':
-                    number = ${{ github.event.number }}
+                    number = '${{ github.event.number }}'
                     break
+            }
+            if (number === ''){
+                throw 'Could not determine PR number.'
             }
             console.log(JSON.stringify(${{github.event}}))
             const description = await github.rest.pulls.get({
