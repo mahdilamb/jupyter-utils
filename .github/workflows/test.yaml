@@ -21,6 +21,6 @@ jobs:
             const description = await github.rest.pulls.get({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                pull_number: context.payload.pull_request.number
+                pull_number: ${{ github.event.number }}
             })
             console.log(description.data.body)
