@@ -5,8 +5,8 @@ import tempfile
 
 import pytest
 
-from jupyter_utils import common as common_utils
-from jupyter_utils import exceptions
+from magicbox import common as common_utils
+from magicbox import exceptions
 
 
 def test_find_package_root(create_working_directory_mocker):

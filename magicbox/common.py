@@ -2,7 +2,7 @@
 
 import os
 
-from jupyter_utils import exceptions
+from magicbox import exceptions
 
 
 def find_project_root(file: str = "pyproject.toml") -> str:

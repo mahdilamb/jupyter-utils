@@ -1,22 +1,23 @@
 [project]
 dynamic = ["version", "readme", "dependencies"]
 license = {file = "LICENCE"}
-name = "jupyter-utils"
+name = "magicbox"
 requires-python = ">=3.11"
 
 [tool.setuptools.dynamic]
 dependencies = {file = "requirements.txt"}
 readme = {file = "README.md"}
-version = {attr = "jupyter_utils.__version__"}
+version = {attr = "magicbox.__version__"}
 
 [project.optional-dependencies]
-all = ["jupyter-utils[dev,polars]"]
-dev = ["pip-tools", "ruff", "jupyter-utils[test]"]
+all = ["magicbox[dev,polars,notebook]"]
+dev = ["pip-tools", "ruff", "magicbox[test]"]
+notebook = ['notebook', 'ipykernel']
 polars = ['polars']
 test = ["pytest", "pytest-cov", "numpy"]
 
 [tool.setuptools.package-dir]
-"jupyter_utils" = "jupyter_utils"
+"magicbox" = "magicbox"
 
 [tool.pytest.ini_options]
 addopts = [
