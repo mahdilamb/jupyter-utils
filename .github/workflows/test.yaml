@@ -20,8 +20,7 @@ jobs:
             let number;
             switch('${{ github.event_name}}') {
                 case 'push':
-                    const execa = require('execa')
-                    const { stdout } = await execa('gh pr view --json number -q .number || echo ""',undefined)
+                    const { stdout } = await exec.getExecOutput('gh pr view --json number -q .number || echo ""',undefined)
                     console.log(stdout)
                     break
                 case 'pull_request':
