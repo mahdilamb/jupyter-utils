@@ -1,10 +1,12 @@
 """Utility functions for working with polars."""
 
 import uuid
-from typing import NamedTuple, ParamSpec, TypeVar
+from typing import Any, NamedTuple, ParamSpec, TypeVar
 
 import numpy as np
 import polars as pl
+from polars import datatypes as pl_dtypes
+from polars import type_aliases as pl_types
 
 T = TypeVar("T", bound=tuple)
 P = ParamSpec("P")
@@ -105,3 +107,15 @@ def train_test_split(
         train=train_df.select(pl.exclude(col_name)),
         validation=validation_df,
     )
+
+
+def to_pandas_schema(schema: pl_types.SchemaDict) -> dict[str, Any]:
+    """Convert a polars schema to pandas schema."""
+    import pandas as pd
+
+    return {
+        k: np.dtype(pl_dtypes.dtype_to_ctype(v).__name__[2:])
+        if not isinstance(v, pl.Enum)
+        else pd.CategoricalDtype(categories=v.categories)
+        for k, v in schema.items()
+    }
