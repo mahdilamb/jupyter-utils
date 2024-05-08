@@ -41,11 +41,11 @@ jobs:
       - uses: actions/github-script@v6
         with:
           script: |
-            const PRDescription = await github.rest.pulls.get(
+            const PRDescription = (await github.rest.pulls.get(
               owner: context.repo.owner,
               repo: context.repo.repo,
               pull_number: context.issue.number
-            )
+            )).description
             github.rest.repos.createRelease({
               owner: context.repo.owner,
               repo: context.repo.repo,
