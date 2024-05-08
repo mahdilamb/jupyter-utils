@@ -1,5 +1,6 @@
 """Utility functions for working with polars."""
 
+import re
 import uuid
 from typing import Any, NamedTuple, ParamSpec, TypeVar
 
@@ -10,6 +11,13 @@ from polars import type_aliases as pl_types
 
 T = TypeVar("T", bound=tuple)
 P = ParamSpec("P")
+SUPPORTED_REGEX_FLAGS = {
+    re.I: "i",
+    re.M: "m",
+    re.S: "s",
+    re.U: "u",
+    re.VERBOSE: "x",
+}
 
 
 class TrainTestSplit(NamedTuple):
@@ -119,3 +127,46 @@ def to_pandas_schema(schema: pl_types.SchemaDict) -> dict[str, Any]:
         else pd.CategoricalDtype(categories=v.categories)
         for k, v in schema.items()
     }
+
+
+def convert_regex(pattern: re.Pattern) -> str:
+    """Convert a python regex pattern for use by polars.
+
+    Args:
+        pattern (re.Pattern): The source pattern.
+
+    Returns:
+        str: The regex that can be used by polars.
+    """
+    flags = f'(?{"".join(tuple(code for flag, code in SUPPORTED_REGEX_FLAGS.items() if pattern.flags & flag == flag))})'
+    if not re.match(r"(?<!\\)\(.*?(?<!\\)\)", pattern.pattern):
+        return f"{flags}({pattern.pattern})"
+    else:
+        return f"{flags}{pattern.pattern}"
+
+
+def to_dict(
+    df: pl.LazyFrame | pl.DataFrame,
+    keys: str | int = 0,
+    values: str | int = 1,
+) -> dict:
+    """Convert two columns into a dictionary."""
+    if isinstance(df, pl.DataFrame):
+        df = df.lazy()
+    if isinstance(keys, int):
+        keys = df.columns[keys]
+    if isinstance(values, int):
+        values = df.columns[values]
+    return dict(
+        zip(
+            *map(
+                tuple,
+                df.group_by(keys, values)
+                .agg()
+                .collect()
+                .to_dict(as_series=False)
+                .values(),
+            ),
+            strict=False,
+        )
+    )
