@@ -17,6 +17,7 @@ jobs:
       - uses: actions/github-script@v6
         with:
           script: |
+            console.log(context.issue)
             const description = await github.rest.pulls.get({
                 owner: context.repo.owner,
                 repo: context.repo.repo,

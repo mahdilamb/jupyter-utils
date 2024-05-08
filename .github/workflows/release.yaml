@@ -41,16 +41,16 @@ jobs:
       - uses: actions/github-script@v6
         with:
           script: |
-            const PRDescription = (await github.rest.pulls.get(
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: context.issue.number
-            )).description
+            const description = await github.rest.pulls.get({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: context.issue.number
+            })
             github.rest.repos.createRelease({
               owner: context.repo.owner,
               repo: context.repo.repo,
               tag_name: '${{steps.version.outputs.version}}',
               draft: false,
-              body: '',
+              body: description.data.body,
               make_latest: true
             })
