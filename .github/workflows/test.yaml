@@ -17,10 +17,10 @@ jobs:
       - uses: actions/github-script@v6
         with:
           script: |
-            console.log(${{ github.event.number }})
+            console.log(JSON.stringify(github))
             const description = await github.rest.pulls.get({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                pull_number: ${{ github.event.number }}
+                pull_number: 7
             })
             console.log(description.data.body)
