@@ -20,6 +20,7 @@ def get_states() -> (
         Any,
     ]
 ):
+    """Get the current state of various random number generators."""
     result = {"random": random.getstate(), "numpy": np.random.get_state()}
     try:
         import torch
