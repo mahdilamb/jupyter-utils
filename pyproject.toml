@@ -14,7 +14,7 @@ all = ["magicbox[dev,polars,notebook]"]
 dev = ["pip-tools", "ruff", "magicbox[test]"]
 notebook = ['notebook', 'ipykernel']
 polars = ['polars']
-test = ["pytest", "pytest-cov", "numpy"]
+test = ["pytest", "pytest-cov", "numpy", "torch"]
 
 [tool.setuptools.package-dir]
 "magicbox" = "magicbox"
